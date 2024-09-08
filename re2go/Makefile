@@ -5,6 +5,6 @@ generate:
 	@for name in *.re; do \
 		RE_IN=$$name; \
 		RE_OUT=$$(echo $$name | sed 's/.re/.go/'); \
-		re2go --input-encoding utf8 -i $$RE_IN -o $$RE_OUT; \
+		re2go -F --input-encoding utf8 -i $$RE_IN -o $$RE_OUT; \
 		gofmt -w $$RE_OUT; \
 	done
