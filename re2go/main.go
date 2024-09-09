@@ -34,4 +34,5 @@ func main() {
 	measure(data, findEmails)
 	measure(data, findURIs)
 	measure(data, findIPs)
+	measure(data, findLongDatePattern)
 }

@@ -48,6 +48,21 @@ func main() {
 	// IP
 	measure(data, `(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9])`)
 
-	// Named groups
-	//measure(data, `(?P<email>[\w\.+-]+@[\w\.-]+\.[\w\.-]+)|(?P<uri>[\w]+://[^/\s?#]+[^\s?#]+(?:\?[^\s#]*)?(?:#[^\s]*)?)|(?P<ip>(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]))`)
+	// Long date pattern
+	day := `[0-3]?[0-9]`
+	month := `` +
+		`January?|February?|March|A[pv]ril|Ma[iy]|Jun[ei]|Jul[iy]|August|September|O[ck]tober|November|De[csz]ember|` +
+		`Jan|Feb|M[aä]r|Apr|Jun|Jul|Aug|Sep|O[ck]t|Nov|De[cz]|` +
+		`Januari|Februari|Maret|Mei|Agustus|` +
+		`Jänner|Feber|März|` +
+		`janvier|février|mars|juin|juillet|aout|septembre|octobre|novembre|décembre|` +
+		`Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık|` +
+		`Oca|Şub|Mar|Nis|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara`
+	year := `199[0-9]|20[0-3][0-9]`
+	longDatePattern := fmt.Sprintf(`(?i)`+
+		`(%[2]s)\s(%[3]s)(?:st|nd|rd|th)?,?\s(%[1]s)`+
+		`|`+
+		`(%[3]s)(?:st|nd|rd|th|\.)?\s(?:of\s)?(%[2]s)[,.]?\s(%[1]s)`,
+		year, month, day)
+	measure(data, longDatePattern)
 }
