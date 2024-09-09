@@ -85,15 +85,15 @@ The benchmark was run on Linux with Intel i7-8550U with RAM 16 GB.
 
 |  Package   | Use CGO | Email (ms) | URI (ms) | IP (ms) | Total (ms) |  Times |
 | :--------: | :-----: | ---------: | -------: | ------: | ---------: | -----: |
-|  RE2 CGO   |   Yes   |       9.27 |    11.72 |    9.49 |      30.48 | 29.86x |
-| Hyperscan  |   Yes   |      25.91 |    24.75 |    0.84 |      51.49 | 17.68x |
-|    PCRE    |   Yes   |      23.15 |    23.55 |    8.76 |      55.46 | 16.42x |
-|   re2go    |         |      54.88 |    37.53 |    9.53 |     101.94 |  8.93x |
-|  RE2 WASM  |         |      51.18 |    58.02 |   49.89 |     159.09 |  5.72x |
-| Go std lib |         |     261.85 |   249.76 |  398.75 |     910.36 |  1.00x |
-|  Modernc   |         |     257.54 |   252.04 |  404.09 |     913.66 |  1.00x |
-|  Grafana   |         |     281.45 |   256.05 |  410.55 |     948.05 |  0.96x |
-|  Regexp2   |         |    2422.29 |  2190.00 |   78.88 |    4691.17 |  0.19x |
+|  RE2 CGO   |   Yes   |       9.21 |    11.66 |    9.04 |      29.90 | 29.35x |
+| Hyperscan  |   Yes   |      25.92 |    25.00 |    0.84 |      51.76 | 16.96x |
+|    PCRE    |   Yes   |      22.61 |    23.30 |    8.58 |      54.48 | 16.11x |
+|   re2go    |         |      70.47 |    43.48 |   20.24 |     134.19 |  6.54x |
+|  RE2 WASM  |         |      50.24 |    56.72 |   49.96 |     156.91 |  5.59x |
+| Go std lib |         |     240.64 |   245.84 |  391.30 |     877.78 |  1.00x |
+|  Modernc   |         |     243.98 |   238.82 |  407.49 |     890.29 |  0.99x |
+|  Grafana   |         |     263.20 |   244.85 |  399.28 |     907.33 |  0.97x |
+|  Regexp2   |         |    2318.68 |  2048.06 |   77.79 |    4444.53 |  0.20x |
 
 - For short regex, RE2 with cgo is the fastest while Regexp2 is the slowest.
 - Regex engines that utilize cgo are way faster than the ones without cgo.
@@ -105,17 +105,17 @@ The benchmark was run on Linux with Intel i7-8550U with RAM 16 GB.
 
 |  Package   | Use CGO | Long Date (ms) |     Times |
 | :--------: | :-----: | -------------: | --------: |
-| Hyperscan  |   Yes   |           1.13 | 11574.37x |
-|  RE2 CGO   |   Yes   |          12.72 |  1031.22x |
-|   re2go    |         |          64.69 |   202.76x |
-|  RE2 WASM  |         |          64.93 |   202.01x |
-|    PCRE    |   Yes   |         177.34 |    73.96x |
-|  Grafana   |         |        3324.21 |     3.95x |
-|  Regexp2   |         |        4386.10 |     2.99x |
-|  Modernc   |         |       12954.90 |     1.01x |
-| Go std lib |         |       13116.46 |     1.00x |
+| Hyperscan  |   Yes   |           1.09 | 11794.72x |
+|  RE2 CGO   |   Yes   |          13.22 |   970.97x |
+|   re2go    |         |          44.87 |   286.02x |
+|  RE2 WASM  |         |          60.43 |   212.35x |
+|    PCRE    |   Yes   |         167.35 |    76.68x |
+|  Grafana   |         |        3386.01 |     3.79x |
+|  Regexp2   |         |        4317.68 |     2.97x |
+| Go std lib |         |       12832.92 |     1.00x |
+|  Modernc   |         |       13076.72 |     0.98x |
 
-- For long regex, Hyperscan with cgo is the fastest while Go standard library is the slowest.
+- For long regex, Hyperscan with cgo is the fastest while Modernc is the slowest.
 - For code without cgo, re2go has the best performance.
 - For code without cgo but with full regex compatibility, RE2 WASM has the best performance.
 - It's interesting how fast Hyperscan for handling long regex pattern.

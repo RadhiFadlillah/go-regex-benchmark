@@ -1,18 +1,16 @@
 package main
 
-import (
-	"unicode"
-)
-
 func findLongDatePattern(runes []rune) int {
+	var count int
 	var cur, mar int
-	lim := len(runes) - 1 // lim points at the terminating null
-	count := 0
+	lim := len(runes)
 
-	// Insensitive search
-	upperRunes := make([]rune, len(runes))
-	for i, r := range runes {
-		upperRunes[i] = unicode.ToUpper(r)
+	// Peek function
+	peek := func(runes []rune, cur int, lim int) rune {
+		if cur < lim {
+			return runes[cur]
+		}
+		return 0
 	}
 
 	// Capturing groups
@@ -23,8 +21,11 @@ func findLongDatePattern(runes []rune) int {
 
 	for { /*!re2c
 		re2c:eof = 0;
+		re2c:yyfill:enable = 0;
+		re2c:posix-captures = 1;
+		re2c:case-insensitive = 1;
 		re2c:define:YYCTYPE     = rune;
-		re2c:define:YYPEEK      = "upperRunes[cur]";
+		re2c:define:YYPEEK      = "peek(runes, cur, lim)";
 		re2c:define:YYSKIP      = "cur += 1";
 		re2c:define:YYBACKUP    = "mar = cur";
 		re2c:define:YYRESTORE   = "cur = mar";
@@ -32,15 +33,16 @@ func findLongDatePattern(runes []rune) int {
 		re2c:define:YYSTAGP     = "@@{tag} = cur";
 		re2c:define:YYSTAGN     = "@@{tag} = -1";
 		re2c:define:YYSHIFTSTAG = "@@{tag} += @@{shift}";
-		re2c:posix-captures = 1;
-		re2c:yyfill:enable = 0;
 
 		rxDay = [0-3]?[0-9];
 		rxYear = 199[0-9]|20[0-3][0-9];
-		rxMonth = JANUARY?|FEBRUARY?|MARCH|A[PV]RIL|MA[IY]|JU(!N[EI]|L[IY])|AUGUST|SEPTEMBER|O[CK]TOBER|NOVEMBER|DE[CSZſ]EMBER|JAN|FEB|M[AÄä]R|APR|JU[LN]|AUG|SEP|O[CK]T|NOV|DE[CZ]|JANUARI|FEBRUARI|M(!ARET|EI)|AGUSTUS|JÄNNER|FEBER|MÄRZ|JANVIER|FÉVRIER|MARS|JUI(!N|LLET)|AOUT|SEPTEMBRE|OCTOBRE|NOVEMBRE|DÉCEMBRE|OCAK|ŞUBAT|MART|NISAN|MAYıS|HAZIRAN|TEMMUZ|AĞUSTOS|E(!YLÜL|KIM)|KASıM|ARALıK|OCA|ŞUB|MAR|NIS|HAZ|TEM|AĞU|E(!YL|KI)|KAS|ARA;
-		rxLongPattern = ({rxMonth})[\t\n\f\r ]({rxDay})(!ST|ND|RD|TH)?,?[\t\n\f\r ]({rxYear})|({rxDay})(!ST|ND|RD|TH|[\.])?[\t\n\f\r ](!OF[\t\n\f\r ])?({rxMonth})[,\.]?[\t\n\f\r ]({rxYear});
+		rxMonth = January?|February?|March|A[pv]ril|Ma[iy]|Ju(!n[ei]|l[iy])|August|September|O[ck]tober|November|De[csz]ember|Jan|Feb|M[aä]r|Apr|Ju[ln]|Aug|Sep|O[ck]t|Nov|De[cz]|Januari|Februari|M(!aret|ei)|Agustus|Jänner|Feber|März|janvier|février|mars|jui(!n|llet)|aout|septembre|octobre|novembre|décembre|Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|E(!ylül|kim)|Kasım|Aralık|Oca|Şub|Mar|Nis|Haz|Tem|Ağu|E(!yl|ki)|Kas|Ara;
+		rxLongPattern = ({rxMonth})[\t\n\f\r ]({rxDay})(!st|nd|rd|th)?,?[\t\n\f\r ]({rxYear})|({rxDay})(!st|nd|rd|th|[\.])?[\t\n\f\r ](!of[\t\n\f\r ])?({rxMonth})[,\.]?[\t\n\f\r ]({rxYear});
 
 		{rxLongPattern} {
+			if yynmatch != 7 {
+				panic("expected 7 submatch groups")
+			}
 			count += 1
 			continue
 		}
