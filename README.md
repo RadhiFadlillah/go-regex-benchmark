@@ -10,8 +10,8 @@ Unlike the original repository, here I only focus on Go language without caring 
 - [Regex Patterns](#regex-patterns)
   - [Short Regex](#short-regex)
   - [Long Regex](#long-regex)
-- [Measure](#measure)
 - [Used Packages](#used-packages)
+- [Measure](#measure)
 - [Result](#result)
   - [Short Regex](#short-regex-1)
   - [Long Regex](#long-regex-1)
@@ -60,10 +60,6 @@ The final pattern is defined as:
 (?i)({month})\s({day})(?:st|nd|rd|th)?,?\s({year})|({day})(?:st|nd|rd|th|\.)?\s(?:of\s)?({month})[,.]?\s({year})
 ```
 
-## Measure
-
-Unlike the original, measuring is done without including regex compilation. So the measurement only focused on pattern matching.
-
 ## Used Packages
 
 There are 8 regular expression packages that used in this benchmark:
@@ -75,7 +71,14 @@ There are 8 regular expression packages that used in this benchmark:
 - **RE2**: the package from [`github.com/wasilibs/go-re2`][go-re2] that binds [`google/re2`][google-re2] regex engine using WebAssembly or cgo.
 - **Hyperscan**: the package from [`github.com/flier/gohs`][go-hyperscan] that binds Intel's [`hyperscan`][hyperscan] regex engine using cgo.
 - **PCRE**: the package from [`github.com/GRbit/go-pcre`][go-pcre] that binds PCRE regex engine using cgo.
-- **re2go**: unlike the others, this one use [`re2go`][re2go] to compile regular expressions into Go code. It uses TDFA algorithm.
+- **re2go**: unlike the others, this one is not using any regex package. Instead, it use [`re2go`][re2go] to compile regular expressions to Go code using TDFA algorithm.
+- **Code Search**: the package from [`github.com/google/codesearch/regexp`][codesearch]. Rather than a regex engine, it's more like a grep engine for searching huge amount of codes. As a grep engine, it's not really comparable to the other packages. It's not thread safe as well. However it's still included here to see what Go actually can do.
+
+## Measure
+
+Unlike the original, measuring is done without including regex compilation. So the measurement only focused on pattern matching.
+
+The measurement are done 10 times, then the smallest durations are used as the final durations.
 
 ## Result
 
@@ -83,42 +86,45 @@ The benchmark was run on Linux with Intel i7-8550U with RAM 16 GB.
 
 ### Short Regex
 
-|  Package   | Use CGO | Email (ms) | URI (ms) | IP (ms) | Total (ms) |  Times |
-| :--------: | :-----: | ---------: | -------: | ------: | ---------: | -----: |
-|  RE2 CGO   |   Yes   |       9.21 |    11.66 |    9.04 |      29.90 | 29.35x |
-| Hyperscan  |   Yes   |      25.92 |    25.00 |    0.84 |      51.76 | 16.96x |
-|    PCRE    |   Yes   |      22.61 |    23.30 |    8.58 |      54.48 | 16.11x |
-|   re2go    |         |      70.47 |    43.48 |   20.24 |     134.19 |  6.54x |
-|  RE2 WASM  |         |      50.24 |    56.72 |   49.96 |     156.91 |  5.59x |
-| Go std lib |         |     240.64 |   245.84 |  391.30 |     877.78 |  1.00x |
-|  Modernc   |         |     243.98 |   238.82 |  407.49 |     890.29 |  0.99x |
-|  Grafana   |         |     263.20 |   244.85 |  399.28 |     907.33 |  0.97x |
-|  Regexp2   |         |    2318.68 |  2048.06 |   77.79 |    4444.53 |  0.20x |
+|   Package   | Use CGO | Email (ms) | URI (ms) | IP (ms) | Total (ms) |  Times |
+| :---------: | :-----: | ---------: | -------: | ------: | ---------: | -----: |
+|   RE2 CGO   |   Yes   |       9.51 |    11.93 |    9.57 |      31.01 | 29.05x |
+| Code Search |         |      12.16 |    13.33 |   12.34 |      37.83 | 23.81x |
+|  Hyperscan  |   Yes   |      26.65 |    25.28 |    0.86 |      52.79 | 17.06x |
+|    PCRE     |   Yes   |      22.59 |    23.72 |    8.59 |      54.89 | 16.41x |
+|    re2go    |         |      75.26 |    45.69 |   22.46 |     143.40 |  6.28x |
+|  RE2 WASM   |         |      52.57 |    58.11 |   49.18 |     159.86 |  5.64x |
+| Go std lib  |         |     249.04 |   254.24 |  397.59 |     900.88 |  1.00x |
+|   Modernc   |         |     260.28 |   252.38 |  391.30 |     903.95 |  1.00x |
+|   Grafana   |         |     278.33 |   264.12 |  423.10 |     965.54 |  0.93x |
+|   Regexp2   |         |    2259.23 |  2040.55 |   77.92 |    4377.71 |  0.21x |
 
 - For short regex, RE2 with cgo is the fastest while Regexp2 is the slowest.
-- Regex engines that utilize cgo are way faster than the ones without cgo.
-- For code without cgo, re2go has the best performance. However some Go's regex syntaxes are not supported by re2go, so there are need to modify to the regex patterns.
+- Regex engines that utilize cgo are way faster than the ones without cgo (excluding Code Search since that one is not a regex engine).
+- For code without cgo, re2go has the best performance. However some Go's regex syntaxes are not supported by re2go, so there are needs to modify the regex patterns.
 - For code without cgo but with full regex compatibility, RE2 WASM has the best performance albeit a bit slower than re2go.
 - Regex engine by Modernc that implements DFA is actually a bit slower than the engine from standard library.
+- It's amazing to see how fast Code Search is. It's almost as fast as RE2 with cgo.
 
 ### Long Regex
 
-|  Package   | Use CGO | Long Date (ms) |     Times |
-| :--------: | :-----: | -------------: | --------: |
-| Hyperscan  |   Yes   |           1.09 | 11794.72x |
-|  RE2 CGO   |   Yes   |          13.22 |   970.97x |
-|   re2go    |         |          44.87 |   286.02x |
-|  RE2 WASM  |         |          60.43 |   212.35x |
-|    PCRE    |   Yes   |         167.35 |    76.68x |
-|  Grafana   |         |        3386.01 |     3.79x |
-|  Regexp2   |         |        4317.68 |     2.97x |
-| Go std lib |         |       12832.92 |     1.00x |
-|  Modernc   |         |       13076.72 |     0.98x |
+|   Package   | Use CGO | Long Date (ms) |     Times |
+| :---------: | :-----: | -------------: | --------: |
+|  Hyperscan  |   Yes   |           1.13 | 11395.46x |
+|   RE2 CGO   |   Yes   |          13.21 |   972.69x |
+|    re2go    |         |          48.11 |   267.09x |
+| Code Search |         |          48.95 |   262.49x |
+|  RE2 WASM   |         |          63.38 |   202.71x |
+|    PCRE     |   Yes   |         174.54 |    73.61x |
+|   Grafana   |         |        3364.24 |     3.82x |
+|   Regexp2   |         |        4330.83 |     2.97x |
+|   Modernc   |         |       12411.65 |     1.04x |
+| Go std lib  |         |       12848.43 |     1.00x |
 
 - For long regex, Hyperscan with cgo is the fastest while Modernc is the slowest.
-- For code without cgo, re2go has the best performance.
-- For code without cgo but with full regex compatibility, RE2 WASM has the best performance.
-- It's interesting how fast Hyperscan for handling long regex pattern.
+- For code without cgo, re2go has the best performance. It's as fast as Code Search.
+- For code without cgo but with full regex compatibility, RE2 WASM has the best performance (since Code Search is not a regex engine).
+- It's interesting to see how fast Hyperscan handling long regex pattern. It's even faster than when it's used for short regex.
 - It's interesting to see PCRE's performance become slower for long regex compared to RE2 and Hyperscan. It's even slower than RE2 WASM.
 - It's also interesting to see how fast Grafana compared to the Go's standard library.
 
@@ -133,3 +139,4 @@ The benchmark was run on Linux with Intel i7-8550U with RAM 16 GB.
 [hyperscan]: https://www.intel.com/content/www/us/en/developer/articles/technical/introduction-to-hyperscan.html
 [go-pcre]: https://github.com/GRbit/go-pcre
 [re2go]: https://re2c.org/manual/manual_go.html
+[codesearch]: https://github.com/google/codesearch

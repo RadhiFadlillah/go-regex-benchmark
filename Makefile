@@ -5,7 +5,13 @@ run-all:
 		echo; \
 	done
 
+clean-all:
+	@for benchmark in **/benchmark*; do \
+		rm $$benchmark; \
+	done
+
 build-all:
+	@make -C codesearch
 	@make -C grafana
 	@make -C hyperscan
 	@make -C modernc
