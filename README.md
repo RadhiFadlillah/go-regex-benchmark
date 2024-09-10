@@ -19,6 +19,7 @@ Unlike the original repository, here I only focus on Go language without caring 
 - [Result](#result)
   - [Short Regex](#short-regex-1)
   - [Long Regex](#long-regex-1)
+- [License](#license)
 
 ## Input Text
 
@@ -170,6 +171,10 @@ Some interesting points:
 - For native Go code, Grafana is pretty fast at handling long regex pattern. It's even faster than regex that compiled by Regexp2Go.
 - For code without cgo, regex that compiled by re2go has the best performance. It has similar performance as Code Search.
 - For code without cgo but with full regex compatibility, RE2 WASM has the best performance (since Code Search currently can't be used as daily regex engine).
+
+## License
+
+Like the original benchmark, this benchmark is also released under MIT license.
 
 [original-benchmark]: https://github.com/karust/regex-benchmark
 [x-in-y]: https://github.com/adambard/learnxinyminutes-docs
