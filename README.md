@@ -26,9 +26,9 @@ For its input, this benchmark use [text](./input-text.txt) from concatenation of
 If you are using GNU Make, you can simply run `make` in the root directory of this benchmark:
 
 ```
-make clean-all		# clean the old build
-make build-all		# rebuild the benchmark executable
-make				# run the benchmark
+make clean-all    # clean the old build
+make build-all    # rebuild the benchmark executable
+make              # run the benchmark
 ```
 
 ## Measurement
