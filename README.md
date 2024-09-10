@@ -2,15 +2,15 @@
 
 This repo is a benchmark for various Golang's regular expressions library. Based on benchmark by Rustem Kamalov [here][original-benchmark].
 
-Unlike the original repository, here I only focus on Go language without caring about its performance compared to the other languages.
+For its input, this benchmark use [text](./input-text.txt) from concatenation of [Learn X in Y minutes][x-in-y] repository. As the original benchmark pointed out, it's not the best representative text for real world benchmark. So, as additional comparison I also made [another benchmark][benchmark-web] that uses around 1000 web pages for input, so feel free to check it out.
 
 ## Table of Contents
 
-- [Input Text](#input-text)
+- [How to Run](#how-to-run)
+- [Measurement](#measurement)
 - [Regex Patterns](#regex-patterns)
   - [Short Regex](#short-regex)
   - [Long Regex](#long-regex)
-- [Measurement](#measurement)
 - [Used Packages](#used-packages)
   - [Native Go Packages](#native-go-packages)
   - [Regex with CGO Binding](#regex-with-cgo-binding)
@@ -21,9 +21,19 @@ Unlike the original repository, here I only focus on Go language without caring 
   - [Long Regex](#long-regex-1)
 - [License](#license)
 
-## Input Text
+## How to Run
 
-Like the original, the [input text](./input-text.txt) is a concatenation of [Learn X in Y minutes][x-in-y] repository.
+If you are using GNU Make, you can simply run `make` in the root directory of this benchmark:
+
+```
+make clean-all		# clean the old build
+make build-all		# rebuild the benchmark executable
+make				# run the benchmark
+```
+
+## Measurement
+
+Unlike the original, measurement is done without including regex compilation, so it's only focused on pattern matching. The measurement are done 10 times, then the smallest durations are used as the final durations.
 
 ## Regex Patterns
 
@@ -64,12 +74,6 @@ The final pattern is defined as:
 ```
 (?i)({month})\s({day})(?:st|nd|rd|th)?,?\s({year})|({day})(?:st|nd|rd|th|\.)?\s(?:of\s)?({month})[,.]?\s({year})
 ```
-
-## Measurement
-
-Unlike the original, measuring is done without including regex compilation. So the measurement only focused on pattern matching.
-
-The measurement are done 10 times, then the smallest durations are used as the final durations.
 
 ## Used Packages
 
@@ -177,6 +181,7 @@ Some interesting points:
 Like the original benchmark, this benchmark is also released under MIT license.
 
 [original-benchmark]: https://github.com/karust/regex-benchmark
+[benchmark-web]: https://github.com/RadhiFadlillah/go-regex-benchmark
 [x-in-y]: https://github.com/adambard/learnxinyminutes-docs
 [grafana]: https://github.com/grafana/regexp/tree/speedup?tab=readme-ov-file
 [modernc]: https://gitlab.com/cznic/regexp
