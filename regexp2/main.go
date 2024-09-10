@@ -18,14 +18,12 @@ func measure(data []rune, pattern string) {
 
 	start := time.Now()
 
-	var matches [][]rune
+	var count int
 	m, _ := r.FindRunesMatch(data)
 	for m != nil {
-		matches = append(matches, m.Runes())
+		count++
 		m, _ = r.FindNextMatch(m)
 	}
-
-	count := len(matches)
 	elapsed := time.Since(start)
 
 	fmt.Printf("%f - %v\n", float64(elapsed)/float64(time.Millisecond), count)
