@@ -181,7 +181,7 @@ Some interesting points:
 Like the original benchmark, this benchmark is also released under MIT license.
 
 [original-benchmark]: https://github.com/karust/regex-benchmark
-[benchmark-web]: https://github.com/RadhiFadlillah/go-regex-benchmark
+[benchmark-web]: https://github.com/RadhiFadlillah/go-regex-benchmark-web
 [x-in-y]: https://github.com/adambard/learnxinyminutes-docs
 [grafana]: https://github.com/grafana/regexp/tree/speedup?tab=readme-ov-file
 [modernc]: https://gitlab.com/cznic/regexp
