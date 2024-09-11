@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func measure(data []rune, rxFinder func([]rune) int) {
+func measure(data []byte, rxFinder func([]byte) int) {
 	start := time.Now()
 	count := rxFinder(data)
 	elapsed := time.Since(start)
@@ -29,7 +29,7 @@ func main() {
 
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(filerc)
-	data := []rune(buf.String())
+	data := buf.Bytes()
 
 	measure(data, findEmails)
 	measure(data, findURIs)
