@@ -128,7 +128,7 @@ There are 12 regular expressions that used in this benchmark:
 
 As reminder, as mentioned above this benchmark might not be the best representative text for real world. So make sure to check my [other benchmark][benchmark-web] that uses around 1000 web pages for its input.
 
-Another note, re2go as a compiler has its own way to handle regular expressions. Thanks to this, in this benchmark its result for email and URI is a bit "unfair" compared to the other packages. This is because for those cases re2go need to use two patterns to handle one regex to achieve a good performance. For more details, please check out [this issue][re2go-issue] where I discuss re2go performance with its maintainer.
+Another note, re2go as a compiler has its own way to handle regular expressions. Thanks to this, in this benchmark its result for email and URI is a bit "unfair" compared to the other packages. This is because for those cases re2go templates in this benchmark is optimized with multiple rules to handle regex with quantifier groups. For more details, please check out [this issue][re2go-issue] where I discuss re2go performance with its maintainer.
 
 With that out of the way, here is the benchmark result. The benchmark was run on my Linux PC with Intel i7-8550U and RAM 16 GB.
 
@@ -136,41 +136,41 @@ With that out of the way, here is the benchmark result. The benchmark was run on
 
 |   Package   |     Type      | Email (ms) | URI (ms) | IP (ms) | Total (ms) |  Times |
 | :---------: | :-----------: | ---------: | -------: | ------: | ---------: | -----: |
-|   RE2 CGO   |      CGO      |       9.50 |    11.87 |    9.55 |      30.92 | 28.26x |
-| Code Search | Native (Grep) |      12.24 |    12.55 |   12.08 |      36.87 | 23.70x |
-|    re2go    |   Compiler    |      21.87 |    19.42 |    7.89 |      49.17 | 17.77x |
-|  Hyperscan  |      CGO      |      26.40 |    25.45 |    0.85 |      52.70 | 16.58x |
-|    PCRE     |      CGO      |      22.74 |    23.55 |    8.71 |      55.00 | 15.89x |
-|  RE2 WASM   |     WASM      |      51.85 |    59.11 |   50.81 |     161.77 |  5.40x |
-|  Regexp2Go  |   Compiler    |      68.60 |   583.80 |  172.79 |     825.19 |  1.06x |
-|   Modernc   |    Native     |     245.42 |   239.14 |  388.22 |     872.79 |  1.00x |
-|     Go      |    Native     |     240.18 |   242.73 |  390.89 |     873.80 |  1.00x |
-|   Grafana   |    Native     |     265.67 |   254.22 |  402.20 |     922.09 |  0.95x |
-|  Regexp2cg  |   Compiler    |    1908.99 |  1766.88 |   67.06 |    3742.93 |  0.23x |
-|   Regexp2   |    Native     |    2313.52 |  2062.74 |   77.29 |    4453.55 |  0.20x |
+|   RE2 CGO   |      CGO      |       9.24 |    11.35 |    9.29 |      29.88 | 29.81x |
+| Code Search | Native (Grep) |      11.69 |    12.55 |   11.98 |      36.22 | 24.59x |
+|    re2go    |   Compiler    |      19.89 |    19.11 |    9.27 |      48.27 | 18.45x |
+|  Hyperscan  |      CGO      |      25.90 |    24.88 |    0.83 |      51.61 | 17.26x |
+|    PCRE     |      CGO      |      22.24 |    23.31 |    8.35 |      53.91 | 16.52x |
+|  RE2 WASM   |     WASM      |      51.37 |    57.81 |   50.48 |     159.66 |  5.58x |
+|  Regexp2Go  |   Compiler    |      67.59 |   567.63 |  168.28 |     803.50 |  1.11x |
+|   Modernc   |    Native     |     245.09 |   237.38 |  376.96 |     859.43 |  1.04x |
+|     Go      |    Native     |     247.08 |   248.97 |  394.57 |     890.62 |  1.00x |
+|   Grafana   |    Native     |     260.91 |   253.38 |  401.77 |     916.05 |  0.97x |
+|  Regexp2cg  |   Compiler    |    1904.43 |  1731.82 |   66.70 |    3702.96 |  0.24x |
+|   Regexp2   |    Native     |    2283.86 |  2041.23 |   77.01 |    4402.10 |  0.20x |
 
 Some interesting points:
 
 - It's amazing to see how fast Code Search is. It's almost as fast as RE2 with cgo.
-- The optimized re2go template generates a very fast native Go code. In the case of IP pattern, it's even faster than RE2 with cgo. However since some Go's regex syntaxes are not supported by re2go, there are needs to modify the regex patterns before using it.
+- The optimized re2go template generates a very fast native Go code. In the case of IP pattern, it's as fast as RE2 with cgo. However since some Go's regex syntaxes are not supported by re2go, there are needs to modify the regex patterns before using it.
 - For code without cgo but with full regex compatibility, RE2 WASM has the best performance albeit a bit slower than re2go.
 
 ### Long Regex
 
 |   Package   |     Type      | Long Date (ms) |     Times |
 | :---------: | :-----------: | -------------: | --------: |
-|  Hyperscan  |      CGO      |           1.17 | 10850.15x |
-|   RE2 CGO   |      CGO      |          13.02 |   975.25x |
-|    re2go    |   Compiler    |          44.22 |   287.11x |
-| Code Search | Native (Grep) |          45.89 |   276.63x |
-|  RE2 WASM   |     WASM      |          61.68 |   205.84x |
-|    PCRE     |      CGO      |         166.84 |    76.09x |
-|   Grafana   |    Native     |        3377.28 |     3.76x |
-|   Regexp2   |    Native     |        4282.33 |     2.96x |
-|  Regexp2cg  |   Compiler    |        5085.57 |     2.50x |
-|  Regexp2Go  |   Compiler    |        7357.85 |     1.73x |
-|   Modernc   |    Native     |       12607.67 |     1.01x |
-|     Go      |    Native     |       12695.81 |     1.00x |
+|  Hyperscan  |      CGO      |           1.14 | 11316.39x |
+|   RE2 CGO   |      CGO      |          12.61 |  1023.52x |
+|    re2go    |   Compiler    |          43.17 |   299.00x |
+| Code Search | Native (Grep) |          45.80 |   281.86x |
+|  RE2 WASM   |     WASM      |          61.34 |   210.44x |
+|    PCRE     |      CGO      |         163.04 |    79.17x |
+|   Grafana   |    Native     |        3324.74 |     3.88x |
+|   Regexp2   |    Native     |        4209.69 |     3.07x |
+|  Regexp2cg  |   Compiler    |        5178.23 |     2.49x |
+|  Regexp2Go  |   Compiler    |        7375.52 |     1.75x |
+|   Modernc   |    Native     |       12595.58 |     1.02x |
+|     Go      |    Native     |       12908.88 |     1.00x |
 
 Some interesting points:
 
