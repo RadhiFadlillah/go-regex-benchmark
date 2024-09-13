@@ -4,8 +4,8 @@ package main
 func findEmails(bytes []byte) int {
 	var count int
 	var cur, mar int
-	bytes = append(bytes, byte(0))
-	lim := len(bytes) - 1
+	bytes = append(bytes, byte(0)) // add terminating null
+	lim := len(bytes) - 1          // lim points at the terminating null
 
 	for {
 		{
@@ -23,20 +23,19 @@ func findEmails(bytes []byte) int {
 			case '_':
 				fallthrough
 			case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
-				goto yy3
+				goto yy2
 			default:
 				if lim <= cur {
-					goto yy13
+					goto yy11
 				}
 				goto yy1
 			}
 		yy1:
 			cur += 1
-		yy2:
 			{
 				continue
 			}
-		yy3:
+		yy2:
 			cur += 1
 			mar = cur
 			yych = bytes[cur]
@@ -47,55 +46,39 @@ func findEmails(bytes []byte) int {
 				fallthrough
 			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
 				fallthrough
-			case '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z':
-				fallthrough
-			case '_':
-				fallthrough
-			case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
-				goto yy5
-			default:
-				goto yy2
-			}
-		yy4:
-			cur += 1
-			yych = bytes[cur]
-		yy5:
-			switch yych {
-			case '+':
-				fallthrough
-			case '-', '.':
-				fallthrough
-			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-				fallthrough
 			case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z':
 				fallthrough
 			case '_':
 				fallthrough
 			case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
-				goto yy4
+				goto yy2
 			case '@':
-				goto yy7
+				goto yy4
 			default:
-				goto yy6
+				goto yy3
 			}
-		yy6:
-			cur = mar
-			goto yy2
-		yy7:
+		yy3:
+			{
+				continue
+			}
+		yy4:
 			cur += 1
 			yych = bytes[cur]
 			switch yych {
 			case 0x00:
-				goto yy6
+				goto yy5
 			case '.':
-				goto yy8
+				goto yy6
 			default:
-				goto yy9
+				goto yy7
 			}
-		yy8:
+		yy5:
+			cur = mar
+			goto yy3
+		yy6:
 			cur += 1
 			yych = bytes[cur]
-		yy9:
+		yy7:
 			switch yych {
 			case '-':
 				fallthrough
@@ -106,52 +89,52 @@ func findEmails(bytes []byte) int {
 			case '_':
 				fallthrough
 			case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
-				goto yy8
-			case '.':
-				goto yy10
-			default:
 				goto yy6
+			case '.':
+				goto yy8
+			default:
+				goto yy5
+			}
+		yy8:
+			cur += 1
+			yych = bytes[cur]
+			switch yych {
+			case '-', '.':
+				fallthrough
+			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+				fallthrough
+			case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z':
+				fallthrough
+			case '_':
+				fallthrough
+			case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
+				goto yy9
+			default:
+				goto yy5
+			}
+		yy9:
+			cur += 1
+			yych = bytes[cur]
+			switch yych {
+			case '-', '.':
+				fallthrough
+			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+				fallthrough
+			case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z':
+				fallthrough
+			case '_':
+				fallthrough
+			case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
+				goto yy9
+			default:
+				goto yy10
 			}
 		yy10:
-			cur += 1
-			yych = bytes[cur]
-			switch yych {
-			case '-', '.':
-				fallthrough
-			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-				fallthrough
-			case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z':
-				fallthrough
-			case '_':
-				fallthrough
-			case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
-				goto yy11
-			default:
-				goto yy6
-			}
-		yy11:
-			cur += 1
-			yych = bytes[cur]
-			switch yych {
-			case '-', '.':
-				fallthrough
-			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-				fallthrough
-			case 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z':
-				fallthrough
-			case '_':
-				fallthrough
-			case 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z':
-				goto yy11
-			default:
-				goto yy12
-			}
-		yy12:
 			{
 				count += 1
 				continue
 			}
-		yy13:
+		yy11:
 			{
 				return count
 			}
