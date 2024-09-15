@@ -14,6 +14,7 @@ build-all:
 	@make -C codesearch
 	@make -C grafana
 	@make -C hyperscan
+	@make -C matloob
 	@make -C modernc
 	@make -C pcre
 	@make -C re2
